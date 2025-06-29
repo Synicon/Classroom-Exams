@@ -230,7 +230,99 @@ showRulesButton.addEventListener('click', () => {
 });
 
 
-  function createDraggableImage(src) {
+	function createDraggableImage(src) {
+	  const wrapper = document.createElement('div');
+	  wrapper.classList.add('image-wrapper');
+
+	  const img = document.createElement('img');
+	  img.src = src;
+	  img.classList.add('draggable');
+	  img.dataset.rotation = 0;
+	  wrapper.appendChild(img);
+	  document.body.appendChild(wrapper);
+
+	  const rect = drawButton.getBoundingClientRect();
+	  wrapper.style.left = rect.left + 'px';
+	  wrapper.style.top = rect.bottom + 10 + 'px';
+	  wrapper.style.zIndex = zIndexCounter++;
+
+	  let offsetX = 0;
+	  let offsetY = 0;
+	  let isDragging = false;
+	  let mouseDownTime = 0;
+	  let moved = false;
+
+	  const startDrag = (x, y) => {
+		isDragging = true;
+		mouseDownTime = Date.now();
+		moved = false;
+		offsetX = x - wrapper.offsetLeft;
+		offsetY = y - wrapper.offsetTop;
+	  };
+
+	  const drag = (x, y) => {
+		if (isDragging) {
+		  moved = true;
+		  wrapper.style.left = (x - offsetX) + 'px';
+		  wrapper.style.top = (y - offsetY) + 'px';
+		}
+	  };
+
+	  const endDrag = () => {
+		if (isDragging) {
+		  isDragging = false;
+		  const duration = Date.now() - mouseDownTime;
+		  if (duration < 200 && !moved) {
+			let currentRotation = parseInt(img.dataset.rotation, 10);
+			currentRotation = (currentRotation + 90) % 360;
+			img.dataset.rotation = currentRotation;
+			img.style.transform = `rotate(${currentRotation}deg)`;
+		  }
+		}
+	  };
+
+	  // Mouse events
+	  img.addEventListener('mousedown', e => {
+		if (e.button !== 0) return;
+		e.preventDefault();
+		startDrag(e.clientX, e.clientY);
+	  });
+
+	  document.addEventListener('mousemove', e => {
+		drag(e.clientX, e.clientY);
+	  });
+
+	  document.addEventListener('mouseup', () => {
+		endDrag();
+	  });
+
+	  // Touch events
+	  img.addEventListener('touchstart', e => {
+		if (e.touches.length === 1) {
+		  e.preventDefault();
+		  const touch = e.touches[0];
+		  startDrag(touch.clientX, touch.clientY);
+		}
+	  }, { passive: false });
+
+	  document.addEventListener('touchmove', e => {
+		if (e.touches.length === 1) {
+		  const touch = e.touches[0];
+		  drag(touch.clientX, touch.clientY);
+		}
+	  }, { passive: false });
+
+	  document.addEventListener('touchend', () => {
+		endDrag();
+	  });
+
+	  img.addEventListener('dblclick', () => {
+		wrapper.style.zIndex = ++zIndexCounter;
+	  });
+
+	  img.ondragstart = () => false;
+	}
+
     const wrapper = document.createElement('div');
     wrapper.classList.add('image-wrapper');
 
