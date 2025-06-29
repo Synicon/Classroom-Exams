@@ -323,65 +323,6 @@ showRulesButton.addEventListener('click', () => {
 	  img.ondragstart = () => false;
 	}
 
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('image-wrapper');
-
-    const img = document.createElement('img');
-    img.src = src;
-    img.classList.add('draggable');
-    img.dataset.rotation = 0;
-    wrapper.appendChild(img);
-    document.body.appendChild(wrapper);
-
-    const rect = drawButton.getBoundingClientRect();
-    wrapper.style.left = rect.left + 'px';
-    wrapper.style.top = rect.bottom + 10 + 'px';
-    wrapper.style.zIndex = zIndexCounter++;
-
-    let offsetX = 0;
-    let offsetY = 0;
-    let isDragging = false;
-    let mouseDownTime = 0;
-    let moved = false;
-
-    img.addEventListener('mousedown', (e) => {
-      if (e.button !== 0) return;
-      isDragging = true;
-      mouseDownTime = Date.now();
-      moved = false;
-      offsetX = e.clientX - wrapper.offsetLeft;
-      offsetY = e.clientY - wrapper.offsetTop;
-    });
-
-    document.addEventListener('mouseup', (e) => {
-      if (isDragging) {
-        isDragging = false;
-        if (e.button === 0) {
-          const mouseUpTime = Date.now();
-          if (mouseUpTime - mouseDownTime < 200 && !moved) {
-            let currentRotation = parseInt(img.dataset.rotation, 10);
-            currentRotation = (currentRotation + 90) % 360;
-            img.dataset.rotation = currentRotation;
-            img.style.transform = `rotate(${currentRotation}deg)`;
-          }
-        }
-      }
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        moved = true;
-        wrapper.style.left = e.clientX - offsetX + 'px';
-        wrapper.style.top = e.clientY - offsetY + 'px';
-      }
-    });
-
-    img.addEventListener('dblclick', () => {
-      wrapper.style.zIndex = ++zIndexCounter;
-    });
-
-    img.ondragstart = () => false;
-  }
   
   
 </script>
