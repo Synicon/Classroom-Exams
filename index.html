@@ -123,7 +123,25 @@
   "s0006.png",
   "rules.png",
   "rule-example.png"
-	];
+  ];
+
+// Load default images on page load
+window.addEventListener('DOMContentLoaded', () => {
+  defaultImageFiles.forEach(fileName => {
+	const url = `aMix/${fileName}`;
+	if (fileName.toLowerCase().includes('rule')) {
+	  rules.push({ name: fileName, url });
+	} else {
+	  images.push(url);
+	}
+  });
+
+  drawButton.disabled = images.length === 0;
+
+  if (rules.length > 0) {
+	message.textContent = `${rules.length} rule image(s) preloaded from 'aMix'.`;
+  }
+});
 
   let images = [];
   let rules = [];
@@ -255,23 +273,7 @@ showRulesButton.addEventListener('click', () => {
     img.ondragstart = () => false;
   }
   
-  // Load default images on page load
-	window.addEventListener('DOMContentLoaded', () => {
-	  defaultImageFiles.forEach(fileName => {
-		const url = `aMix/${fileName}`;
-		if (fileName.toLowerCase().includes('rule')) {
-		  rules.push({ name: fileName, url });
-		} else {
-		  images.push(url);
-		}
-	  });
-
-	  drawButton.disabled = images.length === 0;
-
-	  if (rules.length > 0) {
-		message.textContent = `${rules.length} rule image(s) preloaded from 'aMix'.`;
-	  }
-	});
+  
 </script>
 
 </body>
