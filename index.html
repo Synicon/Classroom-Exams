@@ -430,6 +430,8 @@
   
     wrapper.appendChild(img);
     document.body.appendChild(wrapper);
+	
+	showAidButton.disabled = true;
   
     const rect = showAidButton.getBoundingClientRect();
     wrapper.style.left = rect.left + 'px';
