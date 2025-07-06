@@ -12,7 +12,7 @@
       min-height: 100vh;
       overflow: hidden;
       position: relative;
-	  min-width: 1024px;
+      min-width: 1024px;
     }
     h1 {
       font-size: 1.5rem;
@@ -40,39 +40,36 @@
       transition: transform 0.2s ease;
       display: block;
     }
-	#rulesContainer {
-	  position: fixed;
-	  top: 50%;
-	  left: 50%;
-	  transform: translate(-50%, -50%);
-	  width: 80vw;
-	  height: 80vh;
-	  background: rgba(255, 255, 255, 0.95);
-	  overflow: hidden;
-	  display: none;
-	  z-index: 9999;
-	}
-
-	#rulesContainer .wrapper {
-	  position: absolute;
-	  left: 50%;
-	  top: 50%;
-	  transform: translate(-50%, -50%);
-	  cursor: grab;
-	}
-
-	#rulesContainer img {
-	  max-width: none;
-	  max-height: 1280px;
-	  display: block;
-	  user-select: none;
-	  pointer-events: auto;
-	}
-	.rules-zoomable {
-	  transition: transform 0.2s ease;
-	  transform-origin: center center;
-	}
-
+    #rulesContainer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80vw;
+      height: 80vh;
+      background: rgba(255, 255, 255, 0.95);
+      overflow: hidden;
+      display: none;
+      z-index: 9999;
+    }
+    #rulesContainer .wrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      cursor: grab;
+    }
+    #rulesContainer img {
+      max-width: none;
+      max-height: 1280px;
+      display: block;
+      user-select: none;
+      pointer-events: auto;
+    }
+    .rules-zoomable {
+      transition: transform 0.2s ease;
+      transform-origin: center center;
+    }
   </style>
 </head>
 <body>
@@ -80,122 +77,106 @@
 <h1>Classroom - Exams</h1>
 
 <input id="fileInput" type="file" multiple accept="image/*" disabled/>
-<button id="showRulesButton">Show Rules</button>
+<div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+  <button id="showRulesButton">Show Rules</button>
+  <button id="showAidButton">Player Aid</button>
+</div>
 <button id="drawButton" disabled>Draw A Card</button>
 <p class="message" id="message"></p>
 
 <div id="rulesContainer"></div>
 
 <script>
+  // Element declarations and global variables
   const fileInput = document.getElementById('fileInput');
   const drawButton = document.getElementById('drawButton');
   const showRulesButton = document.getElementById('showRulesButton');
+  const showAidButton = document.getElementById('showAidButton');
   const message = document.getElementById('message');
   const rulesContainer = document.getElementById('rulesContainer');
-  const defaultImageFiles = [
-  "D0001.png",
-  "D0002.png",
-  "D0003.png",
-  "D0004.png",
-  "D0005.png",
-  "D0006.png",
-  "D0007.png",
-  "D0008.png",
-  "D0009.png",
-  "D0010.png",
-  "D0011.png",
-  "D0012.png",
-  "D0013.png",
-  "D0014.png",
-  "D0015.png",
-  "D0016.png",
-  "D0017.png",
-  "D0018.png",
-  "D0019.png",
-  "D0020.png",
-  "D0021.png",
-  "D0022.png",
-  "D0023.png",
-  "D0024.png",
-  "D0025.png",
-  "D0026.png",
-  "D0027.png",
-  "D0028.png",
-  "D0029.png",
-  "D0030.png",
-  "D0031.png",
-  "D0032.png",
-  "D0033.png",
-  "D0034.png",
-  "D0035.png",
-  "D0036.png",
-  "S0001.png",
-  "S0002.png",
-  "S0003.png",
-  "S0004.png",
-  "S0005.png",
-  "S0006.png",
-  "S0007.png",
-  "S0008.png",
-  "S0009.png",
-  "S0010.png",
-  "rules.png",
-  ];
-
-// Load default images on page load
-window.addEventListener('DOMContentLoaded', () => {
-  defaultImageFiles.forEach(fileName => {
-	const url = `aMIX/${fileName}`;
-	if (fileName.toLowerCase().includes('rule')) {
-	  rules.push({ name: fileName, url });
-	} else {
-	  images.push(url);
-	}
-  });
   
-	console.log("Loaded Images:");
-	images.forEach(url => console.log("Image:", url));
-	rules.forEach(rule => console.log("Rule:", rule.name));
-	console.log(`Total files: ${defaultImageFiles.length}`);
-	console.log(`Drawable images: ${images.length}`);
-	console.log(`Rule images: ${rules.length}`);
-
-
-
-  drawButton.disabled = images.length === 0;
-
-  if (rules.length > 0) {
-	message.textContent = `${rules.length} rule image(s) preloaded.`;
-  }
-});
-
+  const defaultImageFiles = [
+    "D0001.png", "D0002.png", "D0003.png", "D0004.png", "D0005.png",
+    "D0006.png", "D0007.png", "D0008.png", "D0009.png", "D0010.png",
+    "D0011.png", "D0012.png", "D0013.png", "D0014.png", "D0015.png",
+    "D0016.png", "D0017.png", "D0018.png", "D0019.png", "D0020.png",
+    "D0021.png", "D0022.png", "D0023.png", "D0024.png", "D0025.png",
+    "D0026.png", "D0027.png", "D0028.png", "D0029.png", "D0030.png",
+    "D0031.png", "D0032.png", "D0033.png", "D0034.png", "D0035.png",
+    "D0036.png", "S0001.png", "S0002.png", "S0003.png", "S0004.png",
+    "S0005.png", "S0006.png", "S0007.png", "S0008.png", "S0009.png",
+    "S0010.png", "aidF.png", "aidR.png", "rules.png"
+  ];
+  
+  // Global arrays to store images, rules, and the aid image
   let images = [];
   let rules = [];
+  let aidImage = null; // we'll store aid image URL separately if needed
   let zIndexCounter = 1;
-
+  
+  // Aid image source variables and state for swapping
+  let aidImageFront = "aMIX/aidF.png";
+  let aidImageBack  = "aMIX/aidR.png";
+  let isAidFront = false; // start with aidR.png showing
+  
+  // On page load, load default images from aMIX folder
+  window.addEventListener('DOMContentLoaded', () => {
+    defaultImageFiles.forEach(fileName => {
+      const url = `aMIX/${fileName}`;
+      const lowerName = fileName.toLowerCase();
+      
+      if (lowerName.includes('rule')) {
+        rules.push({ name: fileName, url });
+      } else if (lowerName.includes('aid')) {
+        // For aid images, we'll consider only aidF.png and aidR.png,
+        // but the swapping uses our global aidImageFront/Back.
+        // (We could also check if fileName === "aidF.png" or "aidR.png")
+        // In this case, we do not add them to the drawable images.
+        // (Alternatively, set aidImage if needed.)
+      } else {
+        images.push(url);
+      }
+    });
+    
+    console.log("Loaded Images:");
+    images.forEach(url => console.log("Image:", url));
+    rules.forEach(rule => console.log("Rule:", rule.name));
+    console.log(`Total files: ${defaultImageFiles.length}`);
+    console.log(`Drawable images: ${images.length}`);
+    console.log(`Rule images: ${rules.length}`);
+    
+    drawButton.disabled = images.length === 0;
+    
+    if (rules.length > 0) {
+      message.textContent = `${rules.length} rule image(s) preloaded.`;
+    }
+  });
+  
+  // Also allow re-loading via file input (if needed)
   fileInput.addEventListener('change', (e) => {
     const files = Array.from(e.target.files);
     rules = [];
     images = [];
-
+    
     files.forEach(file => {
       const url = URL.createObjectURL(file);
-      const isRule = file.name.toLowerCase().includes("rule");
-      if (isRule) {
+      const lowerName = file.name.toLowerCase();
+      if (lowerName.includes("rule")) {
         rules.push({ name: file.name, url });
       } else {
         images.push(url);
       }
     });
-
+    
     drawButton.disabled = images.length === 0;
-
+    
     const skippedCount = files.length - images.length;
     message.textContent = skippedCount > 0
       ? `${skippedCount} rule image(s) loaded for 'Show Rules'.`
       : '';
   });
-
+  
+  // "Draw A Card" button shows a random drawable image
   drawButton.addEventListener('click', () => {
     if (images.length === 0) {
       message.textContent = "No images left! Please add more.";
@@ -205,7 +186,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const imgSrc = images[randomIndex];
     images.splice(randomIndex, 1);
     createDraggableImage(imgSrc);
-
+    
     if (images.length === 0) {
       message.textContent = "That was the last image!";
       drawButton.disabled = true;
@@ -213,223 +194,281 @@ window.addEventListener('DOMContentLoaded', () => {
       message.textContent = `${images.length} image(s) remaining.`;
     }
   });
-
-showRulesButton.addEventListener('click', () => {
-  // Toggle visibility
-  const isVisible = rulesContainer.style.display === 'block';
-
-  if (!isVisible) {
-    rulesContainer.innerHTML = ''; // Clear previous content
-
-    if (rules.length === 0) {
-      rulesContainer.textContent = "No rule images loaded.";
+  
+  // "Show Rules" button toggles rule images within rulesContainer
+  showRulesButton.addEventListener('click', () => {
+    const isVisible = rulesContainer.style.display === 'block';
+    
+    if (!isVisible) {
+      rulesContainer.innerHTML = ''; // Clear previous content
+      
+      if (rules.length === 0) {
+        rulesContainer.textContent = "No rule images loaded.";
+      } else {
+        rules.forEach(rule => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'wrapper';
+          
+          const img = document.createElement('img');
+          img.src = rule.url;
+          img.alt = rule.name;
+          img.classList.add('rules-zoomable');
+          img.dataset.scale = 1;
+          
+          wrapper.appendChild(img);
+          rulesContainer.appendChild(wrapper);
+          
+          // Zoom behavior for rule images
+          img.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            let scale = parseFloat(img.dataset.scale);
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            scale = Math.min(3, Math.max(0.3, scale + delta));
+            img.dataset.scale = scale.toFixed(2);
+            img.style.transform = `scale(${scale})`;
+          });
+          
+          // Pan behavior for rule image wrappers
+          let isPanning = false;
+          let startX = 0, startY = 0;
+          let offsetX = window.innerWidth / 2;
+          let offsetY = window.innerHeight / 2;
+          
+          const setWrapperPosition = () => {
+            wrapper.style.left = `${offsetX}px`;
+            wrapper.style.top = `${offsetY}px`;
+          };
+          setWrapperPosition();
+          
+          wrapper.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isPanning = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            wrapper.style.cursor = 'grabbing';
+            wrapper.style.transform = ''; // remove center translate
+          });
+          
+          document.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            offsetX += e.clientX - startX;
+            offsetY += e.clientY - startY;
+            startX = e.clientX;
+            startY = e.clientY;
+            setWrapperPosition();
+          });
+          
+          document.addEventListener('mouseup', () => {
+            isPanning = false;
+            wrapper.style.cursor = 'grab';
+          });
+          
+          // Touch pan support for rule images
+          wrapper.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+              e.preventDefault();
+              const touch = e.touches[0];
+              isPanning = true;
+              startX = touch.clientX;
+              startY = touch.clientY;
+              wrapper.style.cursor = 'grabbing';
+              wrapper.style.transform = '';
+            }
+          }, { passive: false });
+          
+          document.addEventListener('touchmove', (e) => {
+            if (!isPanning || e.touches.length !== 1) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            offsetX += touch.clientX - startX;
+            offsetY += touch.clientY - startY;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            setWrapperPosition();
+          }, { passive: false });
+          
+          document.addEventListener('touchend', () => {
+            isPanning = false;
+            wrapper.style.cursor = 'grab';
+          });
+          
+          // Add dblclick to bring rule images to front
+          img.addEventListener('dblclick', () => {
+            wrapper.style.zIndex = ++zIndexCounter;
+          });
+        });
+      }
+      rulesContainer.style.display = 'block'; // Show the container
     } else {
-rules.forEach(rule => {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'wrapper';
-
-  const img = document.createElement('img');
-  img.src = rule.url;
-  img.alt = rule.name;
-  img.classList.add('rules-zoomable');
-  img.dataset.scale = 1;
-
-  wrapper.appendChild(img);
-  rulesContainer.appendChild(wrapper);
-
-  // Zoom
-  img.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    let scale = parseFloat(img.dataset.scale);
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    scale = Math.min(3, Math.max(0.3, scale + delta));
-    img.dataset.scale = scale.toFixed(2);
-    img.style.transform = `scale(${scale})`;
+      rulesContainer.style.display = 'none'; // Hide the container
+    }
   });
-
-  // Pan logic
-  let isPanning = false;
-  let startX = 0, startY = 0;
-  let offsetX = window.innerWidth / 2;
-  let offsetY = window.innerHeight / 2;
-
-  const setWrapperPosition = () => {
-    wrapper.style.left = `${offsetX}px`;
-    wrapper.style.top = `${offsetY}px`;
-  };
-  setWrapperPosition();
-
-  wrapper.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    isPanning = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    wrapper.style.cursor = 'grabbing';
-    wrapper.style.transform = ''; // remove center translate
+  
+  // Clicking anywhere outside rulesContainer hides it.
+  document.addEventListener('click', (e) => {
+    if (
+      rulesContainer.style.display === 'block' &&
+      !rulesContainer.contains(e.target) &&
+      e.target !== showRulesButton
+    ) {
+      rulesContainer.style.display = 'none';
+    }
   });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isPanning) return;
-    offsetX += e.clientX - startX;
-    offsetY += e.clientY - startY;
-    startX = e.clientX;
-    startY = e.clientY;
-    setWrapperPosition();
-  });
-
-  document.addEventListener('mouseup', () => {
-    isPanning = false;
-    wrapper.style.cursor = 'grab';
-  });
-
-  // Touch
-  wrapper.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
+  
+  // Reusable function: make an image draggable (with optional rotation)
+  function makeImageDraggable(wrapper, img, allowRotate = false) {
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+    let moved = false;
+    let dragStartTime = 0;
+    
+    const startDrag = (x, y) => {
+      isDragging = true;
+      moved = false;
+      dragStartTime = Date.now();
+      offsetX = x - wrapper.offsetLeft;
+      offsetY = y - wrapper.offsetTop;
+    };
+    
+    const doDrag = (x, y) => {
+      if (isDragging) {
+        moved = true;
+        wrapper.style.left = (x - offsetX) + 'px';
+        wrapper.style.top = (y - offsetY) + 'px';
+      }
+    };
+    
+    const endDrag = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      const elapsed = Date.now() - dragStartTime;
+      if (allowRotate && elapsed < 200 && !moved) {
+        let currentRotation = parseInt(img.dataset.rotation, 10);
+        currentRotation = (currentRotation + 90) % 360;
+        img.dataset.rotation = currentRotation;
+        img.style.transform = `rotate(${currentRotation}deg)`;
+      }
+    };
+    
+    img.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
       e.preventDefault();
-      const touch = e.touches[0];
-      isPanning = true;
-      startX = touch.clientX;
-      startY = touch.clientY;
-      wrapper.style.cursor = 'grabbing';
-      wrapper.style.transform = '';
-    }
-  }, { passive: false });
+      startDrag(e.clientX, e.clientY);
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      doDrag(e.clientX, e.clientY);
+    });
+    
+    document.addEventListener('mouseup', () => {
+      endDrag();
+    });
+    
+    // Touch support for draggable images
+	img.addEventListener('touchstart', (e) => {
+	  if (e.touches.length === 1) {
+		const touch = e.touches[0];
+		startX = touch.clientX;
+		startY = touch.clientY;
+		wasMoved = false;
+	  }
+	}, { passive: false });
 
-  document.addEventListener('touchmove', (e) => {
-    if (!isPanning || e.touches.length !== 1) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    offsetX += touch.clientX - startX;
-    offsetY += touch.clientY - startY;
-    startX = touch.clientX;
-    startY = touch.clientY;
-    setWrapperPosition();
-  }, { passive: false });
+	img.addEventListener('touchmove', (e) => {
+	  const touch = e.touches[0];
+	  if (Math.abs(touch.clientX - startX) > 3 || Math.abs(touch.clientY - startY) > 3) {
+		wasMoved = true;
+	  }
+	}, { passive: false });
 
-  document.addEventListener('touchend', () => {
-    isPanning = false;
-    wrapper.style.cursor = 'grab';
-  });
-});
-
-    }
-    rulesContainer.style.display = 'block'; // Show after populating
-  } else {
-    rulesContainer.style.display = 'none'; // Hide
+	img.addEventListener('touchend', () => {
+	  if (!wasMoved) {
+		isAidFront = !isAidFront;
+		img.src = isAidFront ? aidImageFront : aidImageBack;
+	  }
+	});
+    
+    img.addEventListener('dblclick', () => {
+      wrapper.style.zIndex = ++zIndexCounter;
+    });
+    
+    img.addEventListener('contextmenu', e => e.preventDefault());
+    img.ondragstart = () => false;
   }
-});
-
-document.addEventListener('click', (e) => {
-  // If rulesContainer is visible and click is outside it and not the button
-  if (
-    rulesContainer.style.display === 'block' &&
-    !rulesContainer.contains(e.target) &&
-    e.target !== showRulesButton
-  ) {
-    rulesContainer.style.display = 'none';
+  
+  // Function for drawing a draggable image from a given source
+  function createDraggableImage(src) {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('image-wrapper');
+  
+    const img = document.createElement('img');
+    img.src = src;
+    img.classList.add('draggable');
+    img.dataset.rotation = 0;
+  
+    wrapper.appendChild(img);
+    document.body.appendChild(wrapper);
+  
+    const rect = drawButton.getBoundingClientRect();
+    wrapper.style.left = rect.left + 'px';
+    wrapper.style.top = rect.bottom + 10 + 'px';
+    wrapper.style.zIndex = zIndexCounter++;
+  
+    makeImageDraggable(wrapper, img, true); // allow rotation
   }
-});
-
-
-function createDraggableImage(src) {
-  const wrapper = document.createElement('div');
-  wrapper.classList.add('image-wrapper');
-
-  const img = document.createElement('img');
-  img.src = src;
-  img.classList.add('draggable');
-  img.dataset.rotation = 0;
-  wrapper.appendChild(img);
-  document.body.appendChild(wrapper);
-
-  const rect = drawButton.getBoundingClientRect();
-  wrapper.style.left = rect.left + 'px';
-  wrapper.style.top = rect.bottom + 10 + 'px';
-  wrapper.style.zIndex = zIndexCounter++;
-
-  let offsetX = 0;
-  let offsetY = 0;
-  let isDragging = false;
-  let moved = false;
-  let dragStartTime = 0;
-
-  const startDrag = (x, y) => {
-    isDragging = true;
-    moved = false;
-    dragStartTime = Date.now();
-    offsetX = x - wrapper.offsetLeft;
-    offsetY = y - wrapper.offsetTop;
-  };
-
-  const doDrag = (x, y) => {
-    if (isDragging) {
-      moved = true;
-      wrapper.style.left = (x - offsetX) + 'px';
-      wrapper.style.top = (y - offsetY) + 'px';
-    }
-  };
-
-  const endDrag = () => {
-    if (!isDragging) return;
-    isDragging = false;
-
-    const elapsed = Date.now() - dragStartTime;
-    if (elapsed < 200 && !moved) {
-      // Rotate 90 degrees
-      let currentRotation = parseInt(img.dataset.rotation, 10);
-      currentRotation = (currentRotation + 90) % 360;
-      img.dataset.rotation = currentRotation;
-      img.style.transform = `rotate(${currentRotation}deg)`;
-    }
-  };
-
-  // ===== Mouse Events =====
-  img.addEventListener('mousedown', (e) => {
-    if (e.button !== 0) return;
-    e.preventDefault();
-    startDrag(e.clientX, e.clientY);
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    doDrag(e.clientX, e.clientY);
-  });
-
-  document.addEventListener('mouseup', () => {
-    endDrag();
-  });
-
-  // ===== Touch Events =====
-  img.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      startDrag(touch.clientX, touch.clientY);
-    }
-  }, { passive: false });
-
-  document.addEventListener('touchmove', (e) => {
-    if (e.touches.length === 1 && isDragging) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      doDrag(touch.clientX, touch.clientY);
-    }
-  }, { passive: false });
-
-  document.addEventListener('touchend', () => {
-    endDrag();
-  });
-
-  img.addEventListener('dblclick', () => {
+  
+  // "Player Aid" button: show an aid image that swaps between aidF.png and aidR.png when clicked.
+  showAidButton.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('image-wrapper');
+  
+    const img = document.createElement('img');
+    // Start by showing aidR.png (the "back" side)
+    img.src = aidImageBack;
+    img.classList.add('draggable');
+  
+    wrapper.appendChild(img);
+    document.body.appendChild(wrapper);
+  
+    const rect = showAidButton.getBoundingClientRect();
+    wrapper.style.left = rect.left + 'px';
+    wrapper.style.top = rect.bottom + 10 + 'px';
     wrapper.style.zIndex = ++zIndexCounter;
+  
+    img.ondragstart = () => false;
+  
+    // Swap image on click (toggle between aidF.png and aidR.png)
+	let wasMoved = false;
+	let startX = 0, startY = 0;
+
+	img.addEventListener('mousedown', (e) => {
+	  startX = e.clientX;
+	  startY = e.clientY;
+	  wasMoved = false;
+	});
+
+	img.addEventListener('mousemove', (e) => {
+	  if (Math.abs(e.clientX - startX) > 3 || Math.abs(e.clientY - startY) > 3) {
+		wasMoved = true;
+	  }
+	});
+
+	img.addEventListener('mouseup', (e) => {
+	  if (!wasMoved) {
+		isAidFront = !isAidFront;
+		img.src = isAidFront ? aidImageFront : aidImageBack;
+	  }
+	});
+  
+    // Also add dblclick to bring this player aid image to the front
+    img.addEventListener('dblclick', () => {
+      wrapper.style.zIndex = ++zIndexCounter;
+    });
+  
+    // Make the aid image draggable
+    makeImageDraggable(wrapper, img);
   });
-
-  img.addEventListener('contextmenu', e => e.preventDefault()); // Block long-press menu
-  img.ondragstart = () => false;
-}
-
-
-  
-  
 </script>
 
 </body>
